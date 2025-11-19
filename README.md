@@ -1,4 +1,4 @@
-Build using `cmake` from inside the PRJ folder.
+Build using `cmake` from inside the root folder.
 
 ```sh
 mkdir build
