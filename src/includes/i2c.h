@@ -7,7 +7,7 @@
 #ifndef I2C_H
 #define I2C_H
 
-#include <pic16f876.h>
+#include <pic18f25k22.h>
 
 /**
  * @brief Write a byte to a specific register of an I2C slave device.
