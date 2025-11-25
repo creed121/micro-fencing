@@ -21,8 +21,8 @@
 
 // Port Configuration: PORTB as digital (disables analog), CCP routing
 #pragma config PBADEN = OFF         // PORTB pins digital
-#pragma config CCP2MX = PORTB       // CCP2 (Green PWM) can be on RB3 or RC1; selecting RB3
-#pragma config CCP3MX = PORTB5      // CCP3 (Blue PWM) can be on RB5 or RC6; selecting RB5
+#pragma config CCP2MX = PORTB       // Use RB3 for CCP2 (Green PWM)
+#pragma config CCP3MX = PORTB5      // Use RB5 for CCP3 (Blue PWM)
 
 // Reset and Debug: MCLR enabled for programming, extended instructions OFF
 #pragma config MCLRE = EXTMCLR  // MCLR pin enabled
