@@ -47,4 +47,4 @@ void i2c_bulk_write(unsigned char reg, unsigned char* data, unsigned char length
  * Note: Slave address is hardcoded as 0xD0 for MPU6050 with AD0 low.
  */
 void i2c_bulk_read(unsigned char reg, unsigned char* buffer, unsigned char length);
-#endif
+#endif // I2C_H

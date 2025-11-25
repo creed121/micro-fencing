@@ -4,15 +4,11 @@
  * @author Christopher Reed, Micah Baker, Lydia Knierim, Samuel Prusia
  * @date 2025-11
  */
-
 #ifndef MAIN_H
 #define MAIN_H
 
 #include <pic18f25k22.h>
 
-/* ============================================================================
- * Configuration Bits for PIC18F25K22
- * ============================================================================ */
 // Oscillator: HS oscillator at medium power (16 MHz)
 #pragma config FOSC = HSMP
 
@@ -31,10 +27,6 @@
 // Optional but recommended: Stack protection, Watchdog OFF
 #pragma config STVREN = ON      // Stack overflow reset
 #pragma config WDTEN = OFF      // Watchdog timer disabled
-
-/* ============================================================================
- * Function Prototypes
- * ============================================================================ */
 
 /**
  * @brief Configure PORTA and PORTB for I/O operations.
@@ -72,4 +64,4 @@ void configure_ports(void);
  */
 void configure_ssp2_i2c(void);
 
-#endif  // MAIN_H
+#endif // MAIN_H

@@ -4,15 +4,10 @@
  * @author Christopher Reed, Micah Baker, Lydia Knierim, Samuel Prusia
  * @date 2025-11
  */
-
 #ifndef LIGHTS_H
 #define LIGHTS_H
 
 #include <pic18f25k22.h>
-
-/* ============================================================================
- * PWM Configuration for RGB LEDs
- * ============================================================================ */
 
 /**
  * PWM Channels:
@@ -24,10 +19,6 @@
  * Frequency: 1 kHz (adjustable via PR2 and Timer2 prescaler)
  * Resolution: 8-bit PWM (0-255 duty cycle)
  */
-
-/* ============================================================================
- * Function Prototypes
- * ============================================================================ */
 
 /**
  * @brief Initialize PWM modules for RGB LED control.
@@ -98,8 +89,8 @@ void lights_off(void);
  * @return unsigned char 1 if fade in progress, 0 if complete
  */
 unsigned char lights_fade_to(unsigned char target_r, 
-                            unsigned char target_g, 
-                            unsigned char target_b, 
-                            unsigned char steps);
+							unsigned char target_g, 
+							unsigned char target_b, 
+							unsigned char steps);
 
-#endif  // LIGHTS_H
+#endif // LIGHTS_H
