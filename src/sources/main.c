@@ -8,26 +8,24 @@
 #include "../includes/main.h"
 #include "../includes/i2c.h"
 #include "../includes/accelerometer.h"
+#include "../includes/lights.h"
 
 /* ============================================================================
  * Port Configuration
  * ============================================================================ */
 /**
- * @brief Configure PORTA as digital output for RGB LED (bits 0-2)
- *        Configure PORTB as input for SSP2 I2C (bits 2-3: SCL2, SDA2)
+ * @brief Configure PORTA as digital output for error indicator
+ *        Configure PORTB for PWM/I2C (RB2-RB3: I2C, RB5: PWM)
+ *        Configure PORTC for PWM (RC2: PWM Red)
  */
 void configure_ports(void)
 {
-    // PORTA: Bits 0-2 as outputs (for RGB)
-    // Set RA0, RA1, RA2 as outputs
-    TRISA = 0xF8;  // TRISA[7:3] = 1 (input), TRISA[2:0] = 0 (output)
-    PORTA = 0x00;  // Initialize all to 0
+    // PORTA: RA0 as output for error indicator LED
+    TRISA = 0xFE;  // RA0 = output, RA1-RA7 = inputs
+    PORTA = 0x00;  // Initialize to 0
     
-    // PORTB: Bits 2-3 configured for SSP2 (I2C)
-    // SSP2SCL = RB2, SSP2SDA = RB3
-    // Configure as digital I/O (not analog)
-    ANSELB = 0x00;  // All PORTB pins digital
-    TRISB = 0xFF;   // All PORTB as inputs (SSP2 controls I2C lines)
+    // PORTB and PORTC are configured by lights_init() for PWM
+    // and by configure_ssp2_i2c() for I2C
 }
 
 /**
@@ -54,32 +52,6 @@ void configure_ssp2_i2c(void)
     SSP2STAT = 0x80;  // SMP = 1 (slew rate disabled for 400 kHz)
 }
 
-/**
- * @brief Output RGB values to PORTA (bits 0-2)
- *        RA0 = Red, RA1 = Green, RA2 = Blue
- */
-void output_rgb_to_porta(unsigned char r, unsigned char g, unsigned char b)
-{
-    unsigned char porta_value = 0x00;
-    
-    // Set RA0 if Red component is > 127
-    if (r > 127) {
-        porta_value |= 0x01;  // RA0 = 1
-    }
-    
-    // Set RA1 if Green component is > 127
-    if (g > 127) {
-        porta_value |= 0x02;  // RA1 = 1
-    }
-    
-    // Set RA2 if Blue component is > 127
-    if (b > 127) {
-        porta_value |= 0x04;  // RA2 = 1
-    }
-    
-    PORTA = porta_value;
-}
-
 /* ============================================================================
  * Main Function
  * ============================================================================ */
@@ -98,17 +70,21 @@ int main(void)
     // Configure SSP2 for I2C communication
     configure_ssp2_i2c();
     
+    // Initialize PWM for RGB LED control
+    lights_init();
+    
     // Initialize accelerometer
     acc_status = accelerometer_init();
     if (acc_status != ACC_SUCCESS) {
-        // Initialization failed; flash LED as error indicator
+        // Initialization failed; flash error indicator on RA0
+        lights_off();
         while (1) {
-            PORTA = 0x01;  // Red LED on
+            PORTA = 0x01;  // Red error indicator on RA0
             // Delay loop (simplified)
             unsigned int delay;
             for (delay = 0; delay < 30000; delay++);
             
-            PORTA = 0x00;  // Red LED off
+            PORTA = 0x00;  // Error indicator off
             for (delay = 0; delay < 30000; delay++);
         }
     }
@@ -134,11 +110,15 @@ int main(void)
             // Map averaged speed to RGB color
             accelerometer_speed_to_color(avg_speed, &r, &g, &b);
             
-            // Output RGB values to PORTA
-            output_rgb_to_porta(r, g, b);
-        } else {
-            // I2C error; turn off LED
+            // Set RGB LED color using PWM
+            lights_set_color(r, g, b);
+            
+            // Clear error indicator
             PORTA = 0x00;
+        } else {
+            // I2C error; turn off LED and set error indicator
+            lights_off();
+            PORTA = 0x01;
         }
         
         // Small delay to prevent I2C bus saturation
