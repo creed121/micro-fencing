@@ -6,6 +6,7 @@
  */
 
 #include "../includes/i2c.h"
+//include "i2c.h"
 #define slave_addr 0xD0  // MPU6050 I2C address with AD0 low (shifted)
 
 void i2c_single_write(unsigned char reg, unsigned char data)
