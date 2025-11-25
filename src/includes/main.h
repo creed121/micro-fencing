@@ -11,7 +11,7 @@
 #include <pic18f25k22.h>
 
 /* ============================================================================
- * Configuration Bits (for PIC18F25K22) - Critical settings only
+ * Configuration Bits for PIC18F25K22
  * ============================================================================ */
 // Oscillator: HS oscillator at medium power (16 MHz)
 #pragma config FOSC = HSMP
@@ -20,9 +20,9 @@
 #pragma config PWRTEN = ON
 
 // Port Configuration: PORTB as digital (disables analog), CCP routing
-#pragma config PBADEN = OFF     // PORTB pins digital
-#pragma config CCP2MX = PORTBE  // CCP2 (Green PWM) on RB3
-#pragma config CCP3MX = PORTB5  // CCP3 (Blue PWM) on RB5
+#pragma config PBADEN = OFF         // PORTB pins digital
+#pragma config CCP2MX = PORTB       // CCP2 (Green PWM) can be on RB3 or RC1; selecting RB3
+#pragma config CCP3MX = PORTB5      // CCP3 (Blue PWM) can be on RB5 or RC6; selecting RB5
 
 // Reset and Debug: MCLR enabled for programming, extended instructions OFF
 #pragma config MCLRE = EXTMCLR  // MCLR pin enabled
@@ -44,12 +44,16 @@
  * - RA1-RA7: Inputs (unused)
  * 
  * PORTB Configuration:
- * - RB2, RB3: SSP2 I2C (SCL2, SDA2) - configured as inputs
+ * - RB2, RB3: SSP2 I2C (SCL2, SDA2)
+ * - RB3: Also used as CCP2 PWM output (Green LED) when not I2C
  * - RB5: PWM Blue output (CCP3)
  * - Other PORTB pins: Inputs (unused)
  * 
  * PORTC Configuration:
- * - RC2: PWM Red output (CCP1)
+ * - RC2: PWM Red output (CCP1 - hardwired, no config option)
+ * 
+ * Note: This is a hardware constraint - RB3 serves dual purpose but SSP2
+ * takes priority for I2C communication. For PWM-only operation, use RC2/RB5.
  * 
  * @return void
  */

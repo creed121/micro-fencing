@@ -16,9 +16,9 @@
 
 /**
  * PWM Channels:
- * - Red:   CCP1 on RC2 (PWM1)
- * - Green: CCP2 on RB3 (PWM2)
- * - Blue:  CCP3 on RB5 (PWM3)
+ * - Red:   CCP1 on RC2 (PWM1) - hardwired, no config option
+ * - Green: CCP2 on RB3 (PWM2) - configured via CCP2MX = PORTB
+ * - Blue:  CCP3 on RB5 (PWM3) - configured via CCP3MX = PORTB5
  * 
  * Timer2 is used as the PWM time base for all CCP modules
  * Frequency: 1 kHz (adjustable via PR2 and Timer2 prescaler)
