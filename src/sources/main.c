@@ -57,43 +57,45 @@ void configure_ssp2_i2c(void)
  * ============================================================================ */
 int main(void)
 {
-    acc_error_t acc_status;
-    gyro_data_t gyro_data;
-    moving_avg_t speed_avg;
-    unsigned int speed;
-    unsigned int avg_speed;
-    unsigned char r, g, b;
+   acc_error_t acc_status;
+   gyro_data_t gyro_data;
+   moving_avg_t speed_avg;
+   unsigned int delay;
+   unsigned int speed;
+   unsigned int avg_speed;
+   unsigned char r, g, b;
     
-    // Configure I/O ports
-    configure_ports();
+   // Configure I/O ports
+   configure_ports();
+   
+   // Configure SSP2 for I2C communication
+   configure_ssp2_i2c();
     
-    // Configure SSP2 for I2C communication
-    configure_ssp2_i2c();
+   // Initialize PWM for RGB LED control
+   lights_init();
     
-    // Initialize PWM for RGB LED control
-    lights_init();
-    
-    // Initialize accelerometer
-    acc_status = accelerometer_init();
-    if (acc_status != ACC_SUCCESS) {
-        // Initialization failed; flash error indicator on RA0
-        lights_off();
-        while (1) {
-            PORTA = 0x01;  // Red error indicator on RA0
-            // Delay loop (simplified)
-            unsigned int delay;
-            for (delay = 0; delay < 30000; delay++);
+   // Initialize accelerometer
+   acc_status = accelerometer_init();
+   if (acc_status != ACC_SUCCESS)
+   {
+      // Initialization failed; flash error indicator on RA0
+      lights_off();
+      while (1)
+      {
+         PORTA = 0x01;  // Red error indicator on RA0
+         // Delay loop (simplified)
+         for (delay = 0; delay < 30000; delay++);
             
-            PORTA = 0x00;  // Error indicator off
-            for (delay = 0; delay < 30000; delay++);
-        }
-    }
+         PORTA = 0x00;  // Error indicator off
+         for (delay = 0; delay < 30000; delay++);
+      }
+   }
     
     // Initialize moving average buffer
-    accelerometer_reset_moving_avg(&speed_avg);
+   accelerometer_reset_moving_avg(&speed_avg);
     
     // Main loop: continuously read gyro and update LED color
-    while (1) {
+   while (1) {
         // Read gyroscope data from all three axes
         acc_status = accelerometer_read_gyro(&gyro_data);
         
@@ -123,7 +125,6 @@ int main(void)
         
         // Small delay to prevent I2C bus saturation
         // Adjust based on your desired sampling rate
-        unsigned int delay;
         for (delay = 0; delay < 5000; delay++);
     }
     
