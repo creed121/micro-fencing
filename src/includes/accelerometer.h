@@ -10,9 +10,6 @@
 
 #include <pic18f25k22.h>
 
-/* ============================================================================
- * MPU-6050 Register Definitions
- * ============================================================================ */
 #define MPU6050_PWR_MGMT_1      0x6B  // Power management register
 #define MPU6050_GYRO_CONFIG     0x1B  // Gyroscope configuration register
 #define MPU6050_ACCEL_CONFIG    0x1C  // Accelerometer configuration register
@@ -20,9 +17,6 @@
 #define MPU6050_GYRO_XOUT_H     0x43  // Gyroscope X-axis high byte
 #define MPU6050_WHO_AM_I        0x75  // Device ID register
 
-/* ============================================================================
- * Error Codes
- * ============================================================================ */
 typedef enum
 {
     ACC_SUCCESS          = 0x00,  // Operation successful
@@ -32,9 +26,6 @@ typedef enum
     ACC_INVALID_PARAM    = 0x04   // Invalid parameter
 } acc_error_t;
 
-/* ============================================================================
- * Data Structure for Gyroscope Data
- * ============================================================================ */
 typedef struct
 {
     int gx;    // Gyroscope X-axis raw value
@@ -42,9 +33,6 @@ typedef struct
     int gz;    // Gyroscope Z-axis raw value
 } gyro_data_t;
 
-/* ============================================================================
- * Data Structure for Moving Average Buffer
- * ============================================================================ */
 #define MOVING_AVG_BUFFER_SIZE 8  // Size of moving average buffer
 
 typedef struct
@@ -53,10 +41,6 @@ typedef struct
     unsigned char index;
     unsigned char is_full;
 } moving_avg_t;
-
-/* ============================================================================
- * Function Prototypes
- * ============================================================================ */
 
 /**
  * @brief Initialize the MPU-6050 accelerometer/gyroscope.
