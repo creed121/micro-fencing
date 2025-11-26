@@ -9,6 +9,7 @@
 #define ACCELEROMETER_H
 
 #include <pic18f25k22.h>
+#include <stdint.h>
 
 #define MPU6050_PWR_MGMT_1      0x6B  // Power management register
 #define MPU6050_GYRO_CONFIG     0x1B  // Gyroscope configuration register
@@ -28,9 +29,9 @@ typedef enum
 
 typedef struct
 {
-    int gx;    // Gyroscope X-axis raw value
-    int gy;    // Gyroscope Y-axis raw value
-    int gz;    // Gyroscope Z-axis raw value
+    int16_t gx;    // Gyroscope X-axis raw value
+    int16_t gy;    // Gyroscope Y-axis raw value
+    int16_t gz;    // Gyroscope Z-axis raw value
 } gyro_data_t;
 
 #define MOVING_AVG_BUFFER_SIZE 8  // Size of moving average buffer

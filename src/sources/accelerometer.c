@@ -52,7 +52,8 @@ acc_error_t accelerometer_init()
  */
 acc_error_t accelerometer_read_gyro(gyro_data_t* gyro)
 {
-	unsigned int buffer[6];
+	unsigned char buffer[6];
+	uint16_t temp;
 	
 	if (!accelerometer_initialized)
 	{
@@ -69,13 +70,16 @@ acc_error_t accelerometer_read_gyro(gyro_data_t* gyro)
 	
 	// Combine high and low bytes into 16-bit signed values
 	// X-axis: buffer[0] (high), buffer[1] (low)
-	gyro->gx = (int)((buffer[0] << 8) | buffer[1]);
+	temp = ((uint16_t) buffer[0] << 8) | buffer[1];
+	gyro->gx = (int16_t) temp;
 	
 	// Y-axis: buffer[2] (high), buffer[3] (low)
-	gyro->gy = (int)((buffer[2] << 8) | buffer[3]);
+	temp = ((uint16_t) buffer[2] << 8) | buffer[3];
+	gyro->gy = (int16_t) temp;
 	
 	// Z-axis: buffer[4] (high), buffer[5] (low)
-	gyro->gz = (int)((buffer[4] << 8) | buffer[5]);
+	temp = ((uint16_t) buffer[4] << 8) | buffer[5];
+	gyro->gz = (int16_t) temp;
 	
 	return ACC_SUCCESS;
 }

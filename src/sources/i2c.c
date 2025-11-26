@@ -17,7 +17,7 @@ void i2c_single_write(unsigned char reg, unsigned char data)
 	while(SSP2CON2bits.SEN);
     
 	// Send Slave_Address + R/W
-	SSP2BUF = slave_addr | 0x01;
+	SSP2BUF = slave_addr | 0x00;
 	while (SSP2STATbits.R_NOT_W);
 	// Check ACK; Technically unnecessary and liable to cause problems
 	/**/
