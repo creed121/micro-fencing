@@ -9,19 +9,19 @@
 //#include "../includes/i2c.h"
 //#include "../includes/accelerometer.h"
 //#include "../includes/lights.h"
-/**/
+
 #include "main.h"
 #include "i2c.h"
 #include "accelerometer.h"
 #include "lights.h"
 #include <xc.h>
-/**/
+
 /**
  * @brief Configure PORTA as digital output for error indicator
  *        Configure PORTB for PWM/I2C (RB2-RB3: I2C, RB5: PWM)
  *        Configure PORTC for PWM (RC2: PWM Red)
  */
-/**/
+
 void configure_ports(void)
 {
 	// PORTA: RA0 as output for error indicator LED
@@ -32,12 +32,12 @@ void configure_ports(void)
 	// PORTB and PORTC are configured by lights_init() for PWM
 	// and by configure_ssp2_i2c() for I2C
 }
-/**/
+
 /**
  * @brief Configure SSP2 module for I2C communication
  *        400 kHz I2C clock as specified in MPU-6050 datasheet
  */
-/**/
+
 void configure_ssp2_i2c(void)
 {
 	// Assuming 16 MHz oscillator
@@ -60,8 +60,7 @@ void configure_ssp2_i2c(void)
    // Enable Internal Pull-ups for I2C lines on PORTB
    INTCON2bits.RBPU = 0;
 }
-/**/
-/**/
+
 int main(void)
 {
 	acc_error_t acc_status;
