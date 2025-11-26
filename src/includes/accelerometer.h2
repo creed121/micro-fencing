@@ -59,7 +59,7 @@ typedef struct {
  * @brief Initialize the MPU-6050 accelerometer/gyroscope.
  * 
  * Configures the MPU-6050 for gyroscope measurement with:
- * - ±250°/s sensitivity (GYRO_CONFIG = 0x00)
+ * - Â±250Â°/s sensitivity (GYRO_CONFIG = 0x00)
  * - Internal clock as timing source
  * 
  * @return acc_error_t Error code (ACC_SUCCESS or error)
@@ -81,7 +81,7 @@ acc_error_t accelerometer_read_gyro(gyro_data_t* gyro);
  * @brief Calculate the magnitude of angular velocity from gyroscope data.
  * 
  * Computes: magnitude = sqrt(gx^2 + gy^2 + gz^2)
- * Result is in raw gyroscope units (not °/s).
+ * Result is in raw gyroscope units (not Â°/s).
  * 
  * @param gyro Pointer to gyro_data_t structure with gyroscope values
  * @return unsigned int Magnitude of angular velocity
