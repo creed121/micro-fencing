@@ -6,10 +6,10 @@
  */
 
 #include <stddef.h>  // For NULL
-#include "../includes/accelerometer.h"
-#include "../includes/i2c.h"
-//#include "accelerometer.h"
-//#include "i2c.h"
+//#include "../includes/accelerometer.h"
+//#include "../includes/i2c.h"
+#include "accelerometer.h"
+#include "i2c.h"
 
 static unsigned char accelerometer_initialized = 0;
 
@@ -36,10 +36,10 @@ acc_error_t accelerometer_init()
 	// PWR_MGMT_1 = 0x00 (internal clock, no sleep)
 	i2c_single_write(MPU6050_PWR_MGMT_1, 0x00);
 	
-	// Configure gyroscope sensitivity to Â±250Â°/s (GYRO_CONFIG = 0x00)
+	// Configure gyroscope sensitivity to ±250°/s (GYRO_CONFIG = 0x00)
 	i2c_single_write(MPU6050_GYRO_CONFIG, 0x00);
 	
-	// Configure accelerometer sensitivity to Â±2g (ACCEL_CONFIG = 0x00)
+	// Configure accelerometer sensitivity to ±2g (ACCEL_CONFIG = 0x00)
 	i2c_single_write(MPU6050_ACCEL_CONFIG, 0x00);
 	
 	accelerometer_initialized = 1;
@@ -52,7 +52,7 @@ acc_error_t accelerometer_init()
  */
 acc_error_t accelerometer_read_gyro(gyro_data_t* gyro)
 {
-	unsigned char buffer[6];
+	unsigned int buffer[6];
 	
 	if (!accelerometer_initialized)
 	{
@@ -97,6 +97,10 @@ acc_error_t accelerometer_calculate_magnitude_with_check(gyro_data_t* gyro,
 	long gx_long = (long)gyro->gx;
 	long gy_long = (long)gyro->gy;
 	long gz_long = (long)gyro->gz;
+    
+//    gx_long = 0;
+//    gy_long = 0;
+//    gz_long = 0;
 	
 	sum = (gx_long * gx_long) + (gy_long * gy_long) + (gz_long * gz_long);
 	
