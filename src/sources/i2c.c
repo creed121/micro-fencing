@@ -5,48 +5,47 @@
  * @date 2025-11
  */
 
-//#include "../includes/i2c.h"
-#include "i2c.h"
+#include "../includes/i2c.h"
+// #include "i2c.h"
 #define slave_addr 0xD0  // MPU6050 I2C address with AD0 low (shifted)
-
-#define MPU6050_7BIT_ADDR 0x68  // 7-bit address
 
 void i2c_single_write(unsigned char reg, unsigned char data)
 {
-    unsigned char addr_byte = (MPU6050_7BIT_ADDR << 1) | 0x00; // write (R/W = 0)
-
-    // Send Start
-    SSP2CON2bits.SEN = 1;
-    while (SSP2CON2bits.SEN); // wait for start to complete
-
-    // Send slave address (write)
-    SSP2BUF = addr_byte;
-    while (SSP2STATbits.BF); // wait for buffer to be shifted out (transmit started)
-    // Check ACK
-    if (SSP2CON2bits.ACKSTAT) {
-        // NACK received - handle error or return early
-        SSP2CON2bits.PEN = 1; while (SSP2CON2bits.PEN);
-        return;
-    }
-
-    // Send register address
-    SSP2BUF = reg;
-    while (SSP2STATbits.BF);
-    if (SSP2CON2bits.ACKSTAT) {
-        SSP2CON2bits.PEN = 1; while (SSP2CON2bits.PEN);
-        return;
-    }
-
-    // Send data
-    SSP2BUF = data;
-    while (SSP2STATbits.BF);
-    if (SSP2CON2bits.ACKSTAT) {
-        // NACK on data byte
-    }
-
-    // Send Stop
-    SSP2CON2bits.PEN = 1;
-    while (SSP2CON2bits.PEN);
+    // Using SSP2 Module
+	// Send start bit and wait for it to complete
+	SSP2CON2bits.SEN = 1;
+	while(SSP2CON2bits.SEN);
+    
+	// Send Slave_Address + R/W
+	SSP2BUF = slave_addr | 0x01;
+	while (SSP2STATbits.R_NOT_W);
+	// Check ACK; Technically unnecessary and liable to cause problems
+	/**/
+	if (SSP2CON2bits.ACKSTAT)
+	{
+		// Abort
+	}
+	/**/
+    
+	// Send Slave Register Address
+	SSP2BUF = reg;
+	while (SSP2STATbits.R_NOT_W);
+	// Check ACK if desired
+    
+	// Write Data
+	SSP2BUF = data;
+	while (SSP2STATbits.R_NOT_W);
+	// Check ACK if desired
+	/**/
+	if (SSP2CON2bits.ACKSTAT)
+	{
+		// Abort
+	}
+	/**/
+    
+	// Send Stop bit
+	SSP2CON2bits.PEN = 1;
+	while (SSP2CON2bits.PEN);
 }
 
 unsigned char i2c_single_read(unsigned char reg)

@@ -4,11 +4,15 @@
  * @author Christopher Reed, Micah Baker, Lydia Knierim, Samuel Prusia
  * @date 2025-11
  */
+
 #ifndef ACCELEROMETER_H
 #define ACCELEROMETER_H
 
 #include <pic18f25k22.h>
 
+/* ============================================================================
+ * MPU-6050 Register Definitions
+ * ============================================================================ */
 #define MPU6050_PWR_MGMT_1      0x6B  // Power management register
 #define MPU6050_GYRO_CONFIG     0x1B  // Gyroscope configuration register
 #define MPU6050_ACCEL_CONFIG    0x1C  // Accelerometer configuration register
@@ -16,27 +20,43 @@
 #define MPU6050_GYRO_XOUT_H     0x43  // Gyroscope X-axis high byte
 #define MPU6050_WHO_AM_I        0x75  // Device ID register
 
-typedef enum {
-	ACC_SUCCESS          = 0x00,  // Operation successful
-	ACC_I2C_ERROR        = 0x01,  // I2C communication error
-	ACC_INIT_ERROR       = 0x02,  // Initialization error
-	ACC_NOT_INITIALIZED  = 0x03,  // Accelerometer not initialized
-	ACC_INVALID_PARAM    = 0x04   // Invalid parameter
+/* ============================================================================
+ * Error Codes
+ * ============================================================================ */
+typedef enum
+{
+    ACC_SUCCESS          = 0x00,  // Operation successful
+    ACC_I2C_ERROR        = 0x01,  // I2C communication error
+    ACC_INIT_ERROR       = 0x02,  // Initialization error
+    ACC_NOT_INITIALIZED  = 0x03,  // Accelerometer not initialized
+    ACC_INVALID_PARAM    = 0x04   // Invalid parameter
 } acc_error_t;
 
-typedef struct {
-	int gx;    // Gyroscope X-axis raw value
-	int gy;    // Gyroscope Y-axis raw value
-	int gz;    // Gyroscope Z-axis raw value
+/* ============================================================================
+ * Data Structure for Gyroscope Data
+ * ============================================================================ */
+typedef struct
+{
+    int gx;    // Gyroscope X-axis raw value
+    int gy;    // Gyroscope Y-axis raw value
+    int gz;    // Gyroscope Z-axis raw value
 } gyro_data_t;
 
+/* ============================================================================
+ * Data Structure for Moving Average Buffer
+ * ============================================================================ */
 #define MOVING_AVG_BUFFER_SIZE 8  // Size of moving average buffer
 
-typedef struct {
-	unsigned int buffer[MOVING_AVG_BUFFER_SIZE];
-	unsigned char index;
-	unsigned char is_full;
+typedef struct
+{
+    unsigned int buffer[MOVING_AVG_BUFFER_SIZE];
+    unsigned char index;
+    unsigned char is_full;
 } moving_avg_t;
+
+/* ============================================================================
+ * Function Prototypes
+ * ============================================================================ */
 
 /**
  * @brief Initialize the MPU-6050 accelerometer/gyroscope.
@@ -107,9 +127,9 @@ unsigned int accelerometer_get_moving_avg(moving_avg_t* avg);
  * @return acc_error_t Error code (ACC_SUCCESS or error)
  */
 acc_error_t accelerometer_speed_to_color(unsigned int speed, 
-										 unsigned char* r,
-										 unsigned char* g,
-										 unsigned char* b);
+                                         unsigned char* r,
+                                         unsigned char* g,
+                                         unsigned char* b);
 
 /**
  * @brief Reset the moving average buffer.
@@ -121,4 +141,4 @@ acc_error_t accelerometer_speed_to_color(unsigned int speed,
  */
 void accelerometer_reset_moving_avg(moving_avg_t* avg);
 
-#endif // ACCELEROMETER_H
+#endif  // ACCELEROMETER_H

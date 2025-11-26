@@ -5,8 +5,8 @@
  * @date 2025-11
  */
 
-//#include "../includes/lights.h"
-#include "lights.h"
+#include "../includes/lights.h"
+// #include "lights.h"
 
 static unsigned char current_r = 0;
 static unsigned char current_g = 0;
@@ -132,66 +132,4 @@ void lights_off(void)
 	CCPR1L = 0;
 	CCPR2L = 0;
 	CCPR3L = 0;
-}
-
-/**
- * @brief Fade RGB LED to a target color over time.
- * 
- * Linear interpolation fade from current to target color.
- * Call this function repeatedly in main loop to achieve smooth fade.
- * 
- * Example usage:
- *   if (lights_fade_to(255, 0, 0, 20)) {
- *       // Fade in progress
- *       // Small delay here
- *   } else {
- *       // Fade complete
- *   }
- */
-unsigned char lights_fade_to(unsigned char target_r,
-							unsigned char target_g,
-							unsigned char target_b,
-							unsigned char steps)
-{
-	// If fade not in progress, initialize new fade
-	if (fade_steps_remaining == 0)
-	{
-		fade_target_r = target_r;
-		fade_target_g = target_g;
-		fade_target_b = target_b;
-		fade_total_steps = steps;
-		fade_steps_remaining = steps;
-		
-		// If steps is 0, just set color immediately
-		if (steps == 0)
-		{
-			lights_set_color(target_r, target_g, target_b);
-			return 0;
-		}
-	}
-	
-	if (fade_steps_remaining == 0)
-	{
-		return 0;  // Fade complete
-	}
-	
-	// Calculate intermediate color using linear interpolation
-	// new_value = current + (target - current) * (steps_done / total_steps)
-	signed int r_diff = (signed int)fade_target_r - (signed int)current_r;
-	signed int g_diff = (signed int)fade_target_g - (signed int)current_g;
-	signed int b_diff = (signed int)fade_target_b - (signed int)current_b;
-	
-	unsigned char steps_done = fade_total_steps - fade_steps_remaining;
-	
-	// Calculate interpolated values
-	// Using integer arithmetic to avoid floating point
-	unsigned char new_r = current_r + (unsigned char)((r_diff * (signed int)steps_done) / (signed int)fade_total_steps);
-	unsigned char new_g = current_g + (unsigned char)((g_diff * (signed int)steps_done) / (signed int)fade_total_steps);
-	unsigned char new_b = current_b + (unsigned char)((b_diff * (signed int)steps_done) / (signed int)fade_total_steps);
-	
-	lights_set_color(new_r, new_g, new_b);
-	
-	fade_steps_remaining--;
-	
-	return (fade_steps_remaining > 0) ? 1 : 0;
 }

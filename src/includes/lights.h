@@ -12,7 +12,7 @@
 /**
  * PWM Channels:
  * - Red:   CCP1 on RC2 (PWM1) - hardwired, no config option
- * - Green: CCP2 on RB3 (PWM2) - configured via CCP2MX = PORTB
+ * - Green: CCP2 on RB3 (PWM2) - configured via CCP2MX = PORTB3
  * - Blue:  CCP3 on RB5 (PWM3) - configured via CCP3MX = PORTB5
  * 
  * Timer2 is used as the PWM time base for all CCP modules
@@ -75,22 +75,5 @@ void lights_set_blue(unsigned char brightness);
  * @return void
  */
 void lights_off(void);
-
-/**
- * @brief Fade RGB LED to a target color over time.
- * 
- * Simple linear fade from current color to target color.
- * Requires repeated calls in main loop with small delays.
- * 
- * @param target_r Target red value (0-255)
- * @param target_g Target green value (0-255)
- * @param target_b Target blue value (0-255)
- * @param steps Number of fade steps (higher = slower fade)
- * @return unsigned char 1 if fade in progress, 0 if complete
- */
-unsigned char lights_fade_to(unsigned char target_r, 
-							unsigned char target_g, 
-							unsigned char target_b, 
-							unsigned char steps);
 
 #endif // LIGHTS_H

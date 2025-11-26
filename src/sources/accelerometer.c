@@ -6,10 +6,10 @@
  */
 
 #include <stddef.h>  // For NULL
-//#include "../includes/accelerometer.h"
-//#include "../includes/i2c.h"
-#include "accelerometer.h"
-#include "i2c.h"
+#include "../includes/accelerometer.h"
+#include "../includes/i2c.h"
+// #include "accelerometer.h"
+// #include "i2c.h"
 
 static unsigned char accelerometer_initialized = 0;
 
@@ -36,10 +36,10 @@ acc_error_t accelerometer_init()
 	// PWR_MGMT_1 = 0x00 (internal clock, no sleep)
 	i2c_single_write(MPU6050_PWR_MGMT_1, 0x00);
 	
-	// Configure gyroscope sensitivity to ±250°/s (GYRO_CONFIG = 0x00)
+	// Configure gyroscope sensitivity to Â±250Â°/s (GYRO_CONFIG = 0x00)
 	i2c_single_write(MPU6050_GYRO_CONFIG, 0x00);
 	
-	// Configure accelerometer sensitivity to ±2g (ACCEL_CONFIG = 0x00)
+	// Configure accelerometer sensitivity to Â±2g (ACCEL_CONFIG = 0x00)
 	i2c_single_write(MPU6050_ACCEL_CONFIG, 0x00);
 	
 	accelerometer_initialized = 1;
@@ -105,7 +105,7 @@ acc_error_t accelerometer_calculate_magnitude_with_check(gyro_data_t* gyro,
 	sum = (gx_long * gx_long) + (gy_long * gy_long) + (gz_long * gz_long);
 	
 	// Integer square root approximation using Newton's method
-	*magnitude = (unsigned int)isqrt(sum);
+	*magnitude = (unsigned int) isqrt(sum);
 	
 	return ACC_SUCCESS;
 }
@@ -123,7 +123,8 @@ static unsigned int isqrt(unsigned long n)
 	unsigned int x = n;
 	unsigned int x1 = (x + 1) >> 1;
 	
-	while (x1 < x) {
+	while (x1 < x)
+	{
 		x = x1;
 		x1 = (x + n / x) >> 1;
 	}
@@ -170,7 +171,7 @@ unsigned int accelerometer_get_moving_avg(moving_avg_t* avg)
 {
 	unsigned int sum = 0;
 	unsigned char i;
-	unsigned char count;
+	unsigned char count = MOVING_AVG_BUFFER_SIZE;
 	
 	if (avg == NULL)
 	{
@@ -184,7 +185,6 @@ unsigned int accelerometer_get_moving_avg(moving_avg_t* avg)
 	}
 	
 	// Sum all values in the buffer
-	count = MOVING_AVG_BUFFER_SIZE;
 	for (i = 0; i < count; i++)
 	{
 		sum += avg->buffer[i];
@@ -249,7 +249,8 @@ acc_error_t accelerometer_speed_to_color(unsigned int speed,
 		*g = 255;
 		*b = 0;
 	}
-	else {
+	else
+	{
 		// Very fast: Blue
 		*r = 0;
 		*g = 0;

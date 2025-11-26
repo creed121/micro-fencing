@@ -10,7 +10,7 @@
 #include <pic18f25k22.h>
 
 // Oscillator: HS oscillator at medium power (16 MHz)
-#pragma config FOSC = HSMP
+#pragma config FOSC = INTIO67
 
 // Power-up Timer: Enabled for stable startup
 #pragma config PWRTEN = ON
