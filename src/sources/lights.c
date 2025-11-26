@@ -5,8 +5,8 @@
  * @date 2025-11
  */
 
-#include "../includes/lights.h"
-//#include "lights.h"
+//#include "../includes/lights.h"
+#include "lights.h"
 
 static unsigned char current_r = 0;
 static unsigned char current_g = 0;
@@ -47,6 +47,8 @@ void lights_init(void)
 	// Configure PORTC, PORTB as digital outputs
 	TRISC = 0xFB;  // RC2 (CCP1) as output
 	TRISB = 0xD7;  // RB3 (CCP2) and RB5 (CCP3) as outputs
+    ANSELC = 0x00;
+    ANSELB = 0x00;
 	
 	// Configure CCP1 (Red) on RC2
 	// CCP1CON: mode = PWM (1100), DCxB = 00
