@@ -6,15 +6,8 @@
  */
 
 //#include "../includes/main.h"
-//#include "../includes/i2c.h"
-//#include "../includes/accelerometer.h"
-//#include "../includes/lights.h"
 
 #include "main.h"
-#include "i2c.h"
-#include "accelerometer.h"
-#include "lights.h"
-#include <xc.h>
 
 /**
  * @brief Configure PORTA as digital output for error indicator
@@ -57,8 +50,8 @@ void configure_ssp2_i2c(void)
 	// SSP2STAT: Configure slew rate
 	SSP2STAT = 0x80;  // SMP = 1 (slew rate disabled for 400 kHz)
 
-   // Enable Internal Pull-ups for I2C lines on PORTB
-   INTCON2bits.RBPU = 0;
+	// Enable Internal Pull-ups for I2C lines on PORTB
+	INTCON2bits.RBPU = 0;
 }
 
 int main(void)
@@ -88,7 +81,7 @@ int main(void)
 		lights_off();
 		while (1)
 		{
-			PORTA = 0x01;  // Red error indicator on RA0
+			PORTA = 0x01;  // Error indicator on RA0
 			// Delay loop (simplified)
 			for (delay = 0; delay < 30000; delay++);
 			

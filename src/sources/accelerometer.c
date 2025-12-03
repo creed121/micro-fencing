@@ -5,12 +5,9 @@
  * @date 2025-11
  */
 
-#include <stddef.h>  // For NULL
-#include "../includes/accelerometer.h"
-#include "../includes/i2c.h"
-#include "../includes/I2Cdev.h"
-// #include "accelerometer.h"
-// #include "i2c.h"
+// #include "../includes/accelerometer.h"
+
+#include "accelerometer.h"
 
 static unsigned char accelerometer_initialized = 0;
 
@@ -21,28 +18,11 @@ static unsigned int isqrt(unsigned long n);
  */
 acc_error_t accelerometer_init()
 {
-	unsigned char device_id;
-	unsigned char config_data[2];
-	
-	// Read WHO_AM_I register to verify device communication
-	device_id = i2c_single_read(MPU6050_WHO_AM_I);
-	
-	// MPU-6050 WHO_AM_I should return 0x68 (with AD0 low)
-	if (device_id != 0x68)
+	MPU6050_initialize();
+	if (!MPU6050_testConnection())
 	{
-		return ACC_I2C_ERROR;
+		return ACC_INIT_ERROR;
 	}
-	
-	// Wake up the MPU-6050 (it may be in sleep mode)
-	// PWR_MGMT_1 = 0x00 (internal clock, no sleep)
-	i2c_single_write(MPU6050_PWR_MGMT_1, 0x00);
-	
-	// Configure gyroscope sensitivity to ±250°/s (GYRO_CONFIG = 0x00)
-	i2c_single_write(MPU6050_GYRO_CONFIG, 0x00);
-	
-	// Configure accelerometer sensitivity to ±2g (ACCEL_CONFIG = 0x00)
-	i2c_single_write(MPU6050_ACCEL_CONFIG, 0x00);
-	
 	accelerometer_initialized = 1;
 	return ACC_SUCCESS;
 }
@@ -52,10 +32,7 @@ acc_error_t accelerometer_init()
  * Performs I2C burst read of 6 bytes starting from GYRO_XOUT_H (0x43).
  */
 acc_error_t accelerometer_read_gyro(gyro_data_t* gyro)
-{
-	unsigned char buffer[6];
-	uint16_t temp;
-	
+{	
 	if (!accelerometer_initialized)
 	{
 		return ACC_NOT_INITIALIZED;
@@ -66,16 +43,10 @@ acc_error_t accelerometer_read_gyro(gyro_data_t* gyro)
 		return ACC_INVALID_PARAM;
 	}
 	
-	// Read 6 bytes starting from GYRO_XOUT_H (0x43)
-	i2c_bulk_read(MPU6050_GYRO_XOUT_H, buffer, 6);
-	
-	// Combine high and low bytes into 16-bit signed values
-	gyro->gx = (int16_t)(((uint16_t)buffer[0] << 8) | buffer[1]);
-    gyro->gy = (int16_t)(((uint16_t)buffer[2] << 8) | buffer[3]);
-    gyro->gz = (int16_t)(((uint16_t)buffer[4] << 8) | buffer[5]);
+	MPU6050_getRotation(&(gyro_data->gx), &(gyro_data->gy), &(gyro_data->gz));
 
 	// O-scope data
-	gyro->gx = (int16_t) 0b1111110110000001;
+	//gyro->gx = (int16_t) 0b1111110110000001;
 	
 	return ACC_SUCCESS;
 }

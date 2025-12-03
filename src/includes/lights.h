@@ -7,7 +7,7 @@
 #ifndef LIGHTS_H
 #define LIGHTS_H
 
-#include <pic18f25k22.h>
+#include "./pic18f25k22.h"
 
 /**
  * PWM Channels:

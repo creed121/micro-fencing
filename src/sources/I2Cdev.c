@@ -31,7 +31,9 @@ THE SOFTWARE.
 ===============================================
 */
 
-#include "I2Cdev.h"
+// #include "../includes/I2Cdev/I2Cdev.h"
+
+#include "I2Cdev/I2Cdev.h"
 
 /** Read multiple bytes from an 8-bit device register.
  * @param devAddr I2C slave device address
