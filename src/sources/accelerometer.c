@@ -8,6 +8,7 @@
 #include <stddef.h>  // For NULL
 #include "../includes/accelerometer.h"
 #include "../includes/i2c.h"
+#include "../includes/I2Cdev.h"
 // #include "accelerometer.h"
 // #include "i2c.h"
 
@@ -72,6 +73,9 @@ acc_error_t accelerometer_read_gyro(gyro_data_t* gyro)
 	gyro->gx = (int16_t)(((uint16_t)buffer[0] << 8) | buffer[1]);
     gyro->gy = (int16_t)(((uint16_t)buffer[2] << 8) | buffer[3]);
     gyro->gz = (int16_t)(((uint16_t)buffer[4] << 8) | buffer[5]);
+
+	// O-scope data
+	gyro->gx = (int16_t) 0b1111110110000001;
 	
 	return ACC_SUCCESS;
 }
