@@ -69,9 +69,9 @@ acc_error_t accelerometer_read_gyro(gyro_data_t* gyro)
 	i2c_bulk_read(MPU6050_GYRO_XOUT_H, buffer, 6);
 	
 	// Combine high and low bytes into 16-bit signed values
-	gyro->gx = (int16_t)(((uint16_t)buffer[1] << 8) | buffer[0]);
-    gyro->gy = (int16_t)(((uint16_t)buffer[3] << 8) | buffer[2]);
-    gyro->gz = (int16_t)(((uint16_t)buffer[5] << 8) | buffer[4]);
+	gyro->gx = (int16_t)(((uint16_t)buffer[0] << 8) | buffer[1]);
+    gyro->gy = (int16_t)(((uint16_t)buffer[2] << 8) | buffer[3]);
+    gyro->gz = (int16_t)(((uint16_t)buffer[4] << 8) | buffer[5]);
 	
 	return ACC_SUCCESS;
 }
