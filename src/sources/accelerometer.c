@@ -69,9 +69,9 @@ acc_error_t accelerometer_read_gyro(gyro_data_t* gyro)
 	i2c_bulk_read(MPU6050_GYRO_XOUT_H, buffer, 6);
 	
 	// Combine high and low bytes into 16-bit signed values
-	gyro->gx = (int16_t)(((uint16_t)buffer[0] << 8) | buffer[1]);
-    gyro->gy = (int16_t)(((uint16_t)buffer[2] << 8) | buffer[3]);
-    gyro->gz = (int16_t)(((uint16_t)buffer[4] << 8) | buffer[5]);
+	gyro->gx = (int16_t)(((uint16_t)buffer[1] << 8) | buffer[0]);
+    gyro->gy = (int16_t)(((uint16_t)buffer[3] << 8) | buffer[2]);
+    gyro->gz = (int16_t)(((uint16_t)buffer[5] << 8) | buffer[4]);
 	
 	return ACC_SUCCESS;
 }
@@ -93,11 +93,7 @@ acc_error_t accelerometer_calculate_magnitude_with_check(gyro_data_t* gyro,
 	long gx_long = (long)gyro->gx;
 	long gy_long = (long)gyro->gy;
 	long gz_long = (long)gyro->gz;
-    
-//    gx_long = 0;
-//    gy_long = 0;
-//    gz_long = 0;
-	
+    	
 	sum = (gx_long * gx_long) + (gy_long * gy_long) + (gz_long * gz_long);
 	
 	// Integer square root approximation using Newton's method
