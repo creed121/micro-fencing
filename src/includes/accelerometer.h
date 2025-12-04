@@ -8,8 +8,10 @@
 #ifndef ACCELEROMETER_H
 #define ACCELEROMETER_H
 
-#include <pic18f25k22.h>
+#include <xc.h>
+#include <stddef.h>
 #include <stdint.h>
+#include "./i2c.h"
 
 #define MPU6050_PWR_MGMT_1      0x6B  // Power management register
 #define MPU6050_GYRO_CONFIG     0x1B  // Gyroscope configuration register

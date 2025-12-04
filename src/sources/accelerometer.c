@@ -5,12 +5,9 @@
  * @date 2025-11
  */
 
-#include <stddef.h>  // For NULL
 #include "../includes/accelerometer.h"
-#include "../includes/i2c.h"
-#include "../includes/I2Cdev.h"
-// #include "accelerometer.h"
-// #include "i2c.h"
+
+// #include "./accelerometer.h"
 
 static unsigned char accelerometer_initialized = 0;
 

@@ -6,15 +6,8 @@
  */
 
 //#include "../includes/main.h"
-//#include "../includes/i2c.h"
-//#include "../includes/accelerometer.h"
-//#include "../includes/lights.h"
 
 #include "main.h"
-#include "i2c.h"
-#include "accelerometer.h"
-#include "lights.h"
-#include <xc.h>
 
 /**
  * @brief Configure PORTA as digital output for error indicator

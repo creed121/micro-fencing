@@ -6,7 +6,9 @@
  */
 
 #include "../includes/i2c.h"
+
 // #include "i2c.h"
+
 #define slave_addr 0xD0  // MPU6050 I2C address with AD0 low (shifted)
 
 void i2c_single_write(unsigned char reg, unsigned char data)
@@ -108,49 +110,49 @@ unsigned char i2c_single_read(unsigned char reg)
 	return SSP2BUF;
 }
 
-void i2c_bulk_write(unsigned char reg, unsigned char* data, unsigned char length)
-{
-    unsigned char i;
-	// Using SSP2 Module
-	// Send start bit and wait for it to complete
-	// Note that SEN is macro-defined as SSPCON2bits.SEN
-	SSP2CON2bits.SEN = 1;
-	while(SSP2CON2bits.SEN);
+// void i2c_bulk_write(unsigned char reg, unsigned char* data, unsigned char length)
+// {
+//     unsigned char i;
+// 	// Using SSP2 Module
+// 	// Send start bit and wait for it to complete
+// 	// Note that SEN is macro-defined as SSPCON2bits.SEN
+// 	SSP2CON2bits.SEN = 1;
+// 	while(SSP2CON2bits.SEN);
     
-	// Send Slave_Address + R/W
-	SSP2BUF = slave_addr | 0x00;
-	while (SSP2STATbits.R_NOT_W);
-	// Check ACK; Technically unnecessary and liable to cause problems
-	/**/
-	if (SSP2CON2bits.ACKSTAT)
-	{
-		// Abort
-	}
-	/**/
+// 	// Send Slave_Address + R/W
+// 	SSP2BUF = slave_addr | 0x00;
+// 	while (SSP2STATbits.R_NOT_W);
+// 	// Check ACK; Technically unnecessary and liable to cause problems
+// 	/**/
+// 	if (SSP2CON2bits.ACKSTAT)
+// 	{
+// 		// Abort
+// 	}
+// 	/**/
     
-	// Send Slave Register Address
-	SSP2BUF = reg;
-	while (SSP2STATbits.R_NOT_W);
-	// Check ACK if desired
+// 	// Send Slave Register Address
+// 	SSP2BUF = reg;
+// 	while (SSP2STATbits.R_NOT_W);
+// 	// Check ACK if desired
     
-	for (i = 0; i < length; i++)
-	{
-		// Write Data
-		SSP2BUF = data[i];
-		while (SSP2STATbits.R_NOT_W);
-		// Check ACK if desired
-		/**/
-		if (SSP2CON2bits.ACKSTAT)
-		{
-			// Abort
-		}
-		/**/
-	}
+// 	for (i = 0; i < length; i++)
+// 	{
+// 		// Write Data
+// 		SSP2BUF = data[i];
+// 		while (SSP2STATbits.R_NOT_W);
+// 		// Check ACK if desired
+// 		/**/
+// 		if (SSP2CON2bits.ACKSTAT)
+// 		{
+// 			// Abort
+// 		}
+// 		/**/
+// 	}
     
-	// Send Stop bit
-	SSP2CON2bits.PEN = 1;
-	while (SSP2CON2bits.PEN);
-}
+// 	// Send Stop bit
+// 	SSP2CON2bits.PEN = 1;
+// 	while (SSP2CON2bits.PEN);
+// }
 
 void i2c_bulk_read(unsigned char reg, unsigned char* buffer, unsigned char length)
 {
