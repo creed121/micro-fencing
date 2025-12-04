@@ -41,7 +41,7 @@ THE SOFTWARE.
 #ifndef _MPU6050_H_
 #define _MPU6050_H_
 
-#include "./I2Cdev.h"
+#include "../I2Cdev/I2Cdev.h"
 
 #if ((defined MPU6050_INCLUDE_DMP_MOTIONAPPS20) || (defined MPU6050_INCLUDE_DMP_MOTIONAPPS41))
     #error DMP is not supported yet

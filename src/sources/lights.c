@@ -5,9 +5,8 @@
  * @date 2025-11
  */
 
-// #include "../includes/lights.h"
-
-#include "lights.h"
+#include "../includes/lights.h"
+// #include "lights.h"
 
 static unsigned char current_r = 0;
 static unsigned char current_g = 0;

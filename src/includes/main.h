@@ -7,12 +7,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include <xc.h>
-
-#include "./pic18f25k22.h"
-#include "./I2Cdev/I2Cdev.h"
-#include "./accelerometer.h"
-#include "./lights.h"
+#include <pic18f25k22.h>
 
 // Oscillator: HS oscillator at medium power (16 MHz)
 #pragma config FOSC = INTIO67

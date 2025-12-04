@@ -4,7 +4,6 @@
  * @author Christopher Reed, Micah Baker, Lydia Knierim, Samuel Prusia
  * @date 2025-11
  */
-
 #include <xc.h>
 
 // #pragma config PLLCFG = OFF

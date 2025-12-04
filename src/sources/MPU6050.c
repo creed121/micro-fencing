@@ -38,9 +38,7 @@ THE SOFTWARE.
 ===============================================
 */
 
-#include "../includes/I2Cdev/MPU6050.h"
-
-//#include "MPU6050.h"
+#include "MPU6050.h"
 
 MPU6050_t mpu6050;
 
