@@ -46,7 +46,7 @@ acc_error_t accelerometer_read_gyro(gyro_data_t* gyro)
 	MPU6050_getRotation(&(gyro_data->gx), &(gyro_data->gy), &(gyro_data->gz));
 
 	// O-scope data
-	//gyro->gx = (int16_t) 0b1111110110000001;
+	//gyro->gx = (int16_t) 0xFD81;
 	
 	return ACC_SUCCESS;
 }
