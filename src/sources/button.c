@@ -5,169 +5,171 @@
  * @date 2025-11
  */
 
+// File: main.c
+// Compiler: XC8 (MPLAB X)
+// Target: PIC18F25K22
+// Purpose: Play melody on CCP5 (RA4) when button on RB0 is pressed.
+// Note: This is the "paste-in-fix" version that avoids "inline delay argument must be constant".
+
 #include <xc.h>
+#include <stdint.h>
+#include <stdbool.h>
 
-// #pragma config PLLCFG = OFF
-// #pragma config PRICLKEN = ON
-// #pragma config FCMEN = ON
-// #pragma config IESO = OFF
-// #pragma config PWRTEN = ON
-// #pragma config BOREN = SBORDIS
-// #pragma config BORV = 190
-// #pragma config WDTEN = OFF
-// #pragma config MCLRE = EXTMCLR
-// #pragma config LVP = OFF
-// #pragma config STVREN = ON
-// #pragma config DEBUG = OFF
+#define _XTAL_FREQ 800000UL   // <-- Set this to your CPU frequency (Hz). Original code used 1 MHz.
 
-#define null 0x00 // rest
-#define b3   0xFC  // PR2 = 252  (~246.94 Hz)
-#define c4   0xEE  // PR2 = 238  (~261.63 Hz)
-#define d4   0xD4  // PR2 = 212  (~293.66 Hz)
-#define e4   0xBD  // PR2 = 189  (~329.63 Hz)
-#define f4   0xB2  // PR2 = 178  (~349.23 Hz)
-#define g4   0x9E  // PR2 = 158  (~392.00 Hz)  
-#define a4   0x8D
-#define b4   0x7D
-#define c5   0x76  // hi
-#define d5   0x69  // PR2 = 99   (~587.33 Hz)
-#define e5   0x5e  // PR2 = 88   (~659.26 Hz)
-#define f5   0x59  // PR2 = 90   (~698.46 Hz)
-#define g5   0x4F  // PR2 = 79   (~783.99 Hz)
-#define a5   0x46  // PR2 = 70   (~880.00 Hz)
-#define b5   0x3E  // PR2 = 62   (~992.06 Hz)
-#define c6   0x3B  // PR2 = 59   (~1041.67 Hz)
+#pragma config FOSC = INTIO67, PLLCFG = OFF, PRICLKEN = ON, FCMEN = ON, PWRTEN = ON
+#pragma config BOREN = SBORDIS, BORV = 250, WDTEN = OFF, WDTPS = 4096, PBADEN = OFF
+#pragma config HFOFST = OFF, MCLRE = EXTMCLR, STVREN = ON, LVP = OFF, DEBUG = OFF
 
-#define TONE_UNIT_MS 100  // base duration unit in milliseconds
+// NOTE: UNIT_MS must be a compile-time constant so __delay_ms(UNIT_MS) is valid inside the helper.
+#define UNIT_MS 75  // tempo unit in milliseconds. Tweak for tempo (50 = faster, 150 = slower).
 
-unsigned char pr_arr[32] =
-{
-    e5, b4, c5, d5,   c5, b4, a4, a4,
-    c5, e5, d5, c5,   b4, b4, c5, d5,
+// Your note definitions
+#define null 0x00
+#define b3  0xFC
+#define c4  0xEE
+#define d4  0xD4
+#define e4  0xBD
+#define f4  0xB2
+#define g4  0x9E
+#define a4  0x8D
+#define b4  0x7D
+#define c5  0x76
+#define d5  0x69
+#define e5  0x5e
+#define f5  0x59
+#define g5  0x4F
+#define a5  0x46
+#define b5  0x3E
+#define c6  0x3B
+
+unsigned char pr_arr[32] = {
+    e5, b4, c5, d5, c5, b4, a4, a4,
+    c5, e5, d5, c5, b4, b4, c5, d5,
     e5, c5, a4, a4, null, d5, f5, a5,
-    g5, f5, e5, c5,   e5, d5, c5, b4
+    g5, f5, e5, c5, e5, d5, c5, b4
 };
 
-unsigned char dura[32] =
-{
-    6, 3, 3, 6, 3, 3, 6, 3,
-    3, 6, 3, 3, 6, 3, 3, 6,
-    6, 6, 6, 6, 6, 6, 3, 6,
-    3, 3, 6, 3, 6, 3, 3, 6
+unsigned char dura[32] = {
+    6,3,3,6,3,3,6,3,3,6,3,3,6,3,3,6,
+    6,6,6,6,6,6,6,3,6,3,3,6,3,6,3
 };
 
-// void main(void)
-// {
-//     init_clock_io();
-//     init_ccp4_pwm_rb0();
+const uint8_t MELODY_LENGTH = 32;
 
-//     while (1)
-//     {
-//         play_sequence_on_button_press();
-//         __delay_ms(30); // light idle delay
-//     }
-// }
-
-void init_clock_io(void)
+// --------- Helper delays to avoid compile-time constant error ----------
+void delay_ms_runtime(uint16_t ms)
 {
-    // // Port directions
-    // TRISA = 0xF0;   // RA0..RA3 outputs, RA4..RA7 inputs
-    // TRISB = 0xFF;  
-    // TRISC = 0x00;
-
-    // // Disable analog functions on used ports
-    // ANSELA = 0x00;
-    // ANSELB = 0x00;
-    // ANSELC = 0x00;
-
-    // // Configure internal oscillator to 8 MHz (IRCF = 111)
-    // OSCCONbits.IRCF = 0b111;
-    // OSCCONbits.SCS = 0b00; // primary clock = system clock (INTOSC)
+    // Calls __delay_ms(1) repeatedly — safe and simple.
+    while (ms--) {
+        __delay_ms(1);
+    }
 }
 
-/* Configure Timer2 and CCP4 for PWM output on RB0 (default CCP4 pin)
-   - PR2 controls PWM frequency (we write PR2 from pr_arr[] for tone)
-   - CCPR4L holds upper 8 bits of duty (we set it to PR2/2 for ~50% duty)
-*/
-void init_ccp4_pwm_rb0(void)
+void delay_units(uint16_t units)
 {
-    // Ensure CCP4 is mapped to RB0 (this is the default on PIC18F25K22).
-    // If you previously changed APFCON, set it back to default. We won't touch APFCON here.
-    // Make RB0 an output for PWM
-    TRISBbits.TRISB0 = 0; // output: module will drive it when TMR2/PWM enabled
+    // UNIT_MS is a compile-time constant macro, so __delay_ms(UNIT_MS) is allowed.
+    while (units--) {
+        __delay_ms(UNIT_MS);
+    }
+}
+// ---------------------------------------------------------------------
 
-    // Ensure the pin is digital
-    ANSELBbits.ANSB0 = 0;
+// PWM/IO helpers
+void init_osc(void)
+{
+    // Use internal oscillator setting as in your original project.
+    OSCCON = 0x30; // selects internal oscillator (1 MHz for these OSCCON bits)
+}
 
-    // Configure CCP4 module for PWM mode
-    CCP4CON = 0x0C;  // PWM mode, DC4B bits = 0 (we use CCPR4L for coarse duty)
+void init_io(void)
+{
+    // RA4 (CCP5) output
+    TRISAbits.TRISA4 = 0;
+    LATAbits.LATA4 = 0;
 
-    // Timer2 configuration:
-    // - prescaler 1:1 (T2CKPS = 0)
-    // - Timer2 off for now, we'll start it when playing a note
-    T2CONbits.T2CKPS = 0;   // prescaler 1
-    T2CONbits.TMR2ON = 0;   // timer2 off initially
-    T2CONbits.T2OUTPS = 0;  // postscaler 1
+    // Make ports digital
+    ANSELA = 0x00;
+    ANSELB = 0x00;
+    ANSELC = 0x00;
 
-    // Clear initial registers
-    PR2 = 0x00;
-    CCPR4L = 0x00;
-    // CCPTMRS1: select timer source mapping for CCP4/5 (0 => Timer2). Clear to be safe:
+    // Button on RB0 (active low)
+    TRISBbits.TRISB0 = 1;
+
+    // Enable weak pull-ups on PORTB if you want (device-specific)
+    INTCON2bits.RBPU = 0;
+}
+
+void init_pwm_ccp5(void)
+{
+    // Configure CCP5 as PWM (CCP5CON<3:0> = 1100 = 0x0C)
+    CCP5CON = 0x0C;
+
+    // Ensure CCP4/5 use Timer2 as PWM timebase
     CCPTMRS1 = 0x00;
+
+    // Timer2 prescaler 1:1, Timer2 off for now
+    T2CONbits.T2CKPS = 0b00;
+    T2CONbits.TMR2ON  = 0;
+
+    // clear PR2 and duty registers
+    PR2 = 0;
+    CCPR5L = 0;
 }
 
-/* Play the melody when RB0 button (active-low) is pressed.
-   NOTE: This sample assumes you have an external pull-up on RB0 and the button shorts RB0 to GND when pressed.
-   If you want internal pull-ups instead, enable OPTION_REGbits.nWPUEN = 0 and set WPUBbits.WPUB0 = 1.
-*/
-void play_sequence_on_button_press(void)
+void pwm_start(void)
 {
-    // Make RB0 input for button read (if you wire button to same pin as speaker,
-    // you must NOT do that — speaker and button must be separate pins.)
-    // IMPORTANT: This code assumes the *button* is on RB0. If your speaker is on RB0,
-    // put the button on a different input pin (e.g., RB4) or use RD1 for PWM.
-    // For clarity: speaker must be on CCP4 pin (RB0) and the button must be on another pin.
-    // The following reads RB0 as button; if RB0 is PWM pin for speaker, remove this read.
-    unsigned char i;
-    unsigned char p;
-    unsigned char dur;
-    TRISBbits.TRISB0 = 1; // set RB0 as input to read button (if you put your button there)
+    PIR1bits.TMR2IF = 0;
+    T2CONbits.TMR2ON = 1;
+}
 
-    // active-low pressed
-    if (PORTBbits.RB0 == 0)
-    {
-        // When playing, configure RB0 as output so PWM can drive speaker
-        TRISBbits.TRISB0 = 0;
+void pwm_stop(void)
+{
+    T2CONbits.TMR2ON = 0;
+    PR2 = 0;
+    CCPR5L = 0;
+    LATAbits.LATA4 = 0;
+}
 
-        for (i = 0; i < sizeof(pr_arr); i++)
-        {
-            p = pr_arr[i];
-            dur = dura[i];
+void play_melody_once(void)
+{
+    uint8_t i;
+    for (i = 0; i < MELODY_LENGTH; i++) {
+        uint8_t p = pr_arr[i];
 
-            if (p == 0x00)
-            {
-                // rest: stop TMR2 and wait
-                T2CONbits.TMR2ON = 0;
-                __delay_ms((uint32_t)dur * TONE_UNIT_MS);
-            }
-            else
-            {
-                PR2 = p;                       // select pitch
-                CCPR4L = PR2 >> 1;             // ~50% duty
-                CCP4CON &= 0xCF;               // clear DC4B lower bits (coarse duty only)
-                // Start timer2 -> PWM output active
-                T2CONbits.TMR2ON = 1;
-
-                // hold the note for dura * unit
-                __delay_ms((uint32_t)dur * TONE_UNIT_MS);
-
-                // short gap between notes
-                T2CONbits.TMR2ON = 0;
-                __delay_ms(TONE_UNIT_MS / 2);
-            }
+        if (p == null) {
+            // rest: stop PWM for the duration
+            pwm_stop();
+            delay_units(dura[i]);   // runtime delay using UNIT_MS chunks
+        } else {
+            // set PR2 to the note value and set 50% duty by CCPR5L = PR2/2
+            PR2 = p;
+            CCPR5L = (uint8_t)(PR2 >> 1); // 50% duty
+            pwm_start();
+            delay_units(dura[i]);   // runtime delay
+            // small gap between notes
+            pwm_stop();
+            delay_units(1);         // short pause (1 unit)
         }
-        // ensure PWM is stopped and pin returned to input (if you want button there)
-        T2CONbits.TMR2ON = 0;
-        TRISBbits.TRISB0 = 1; // return to input to detect next press
+    }
+}
+
+void main(void)
+{
+    init_osc();
+    init_io();
+    init_pwm_ccp5();
+
+    while (1) {
+        // Wait for active-low button press
+        
+            if (PORTBbits.RB0 == 0) {
+                // Play the melody once
+                play_melody_once();
+                // simple post-press debounce: wait until button released
+                while (PORTBbits.RB0 == 0) { delay_ms_runtime(10); }
+                delay_ms_runtime(50);
+            }
+        
     }
 }
