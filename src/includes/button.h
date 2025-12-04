@@ -6,12 +6,9 @@
  * @brief Header for button.c — button / PWM melody driver for Micro-Fencing project.
  */
 
+#include <xc.h>
 #include <stdint.h>
 #include <stdbool.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /* ---------------------------------------------------------------------
  * Configuration Macros
@@ -45,9 +42,7 @@ extern "C" {
  * External Melody Data
  * ------------------------------------------------------------------ */
 
-extern unsigned char pr_arr[32];
-extern unsigned char dura[32];
-extern const uint8_t MELODY_LENGTH;
+#define MELODY_LENGTH 32
 
 /* ---------------------------------------------------------------------
  * Public API
@@ -65,9 +60,5 @@ void button_code(void);
 
 void delay_ms_runtime(uint16_t ms);
 void delay_units(uint16_t units);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* BUTTON_H */
