@@ -27,17 +27,7 @@ void i2c_single_write(unsigned char reg, unsigned char data);
 unsigned char i2c_single_read(unsigned char reg);
 
 
-// // See pages 35-36 fo MPU6050 Datasheet
-// /**
-//  * @brief Write multiple bytes to consecutive registers of an I2C slave device.
-//  * @param reg The starting register address to write to.
-//  * @param data Pointer to the data buffer containing bytes to write.
-//  * @param length The number of bytes to write.
-//  * @return void
-//  * Note: Slave address is hardcoded as 0xD0 for MPU6050 with AD0 low.
-//  */
-// void i2c_bulk_write(unsigned char reg, unsigned char* data, unsigned char length);
-
+// See pages 35-36 of MPU6050 Datasheet
 /**
  * @brief Read multiple bytes from consecutive registers of an I2C slave device.
  * @param reg The starting register address to read from.
