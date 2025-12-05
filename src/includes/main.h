@@ -32,6 +32,9 @@
 #pragma config STVREN = ON      // Stack overflow reset
 #pragma config WDTEN = OFF      // Watchdog timer disabled
 
+// Add JavaDoc
+void configure_osc(void);
+
 /**
  * @brief Configure PORTA and PORTB for I/O operations.
  * 
