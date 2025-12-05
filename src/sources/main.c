@@ -9,21 +9,34 @@
 
 #include "main.h"
 
+// Add JavaDoc
+void configure_osc(void)
+{
+	// Use internal oscillator
+	OSCCON = 0x76;
+}
+
 /**
  * @brief Configure PORTA as digital output for error indicator
- *        Configure PORTB for PWM/I2C (RB2-RB3: I2C, RB5: PWM)
+ *        Configure PORTB for Button/PWM/I2C (RB0: Button, RB2-RB3: I2C, RB5: PWM)
  *        Configure PORTC for PWM (RC2: PWM Red)
  */
 
 void configure_ports(void)
 {
 	// PORTA: RA0 as output for error indicator LED
-	TRISA  = 0xFE;  // RA0 = output, RA1-RA7 = inputs
+	TRISA  = 0x00;
+	TRISB  = 0x01;
+	TRISC  = 0x00;  
     ANSELA = 0x00;
-	PORTA  = 0x00;  // Initialize to 0
-	
-	// PORTB and PORTC are configured by lights_init() for PWM
-	// and by configure_ssp2_i2c() for I2C
+	ANSELB = 0x00;
+	ANSELC = 0x00;
+	PORTA  = 0x00;
+	PORTB  = 0x00;
+	PORTC  = 0x00;
+
+	// Enable Internal Pull-Ups for I2C lines and Button on PORTB
+	INTCON2bits.RBPU = 0;
 }
 
 /**
@@ -49,9 +62,6 @@ void configure_ssp2_i2c(void)
 	
 	// SSP2STAT: Configure slew rate
 	SSP2STAT = 0x80;  // SMP = 1 (slew rate disabled for 400 kHz)
-
-   // Enable Internal Pull-ups for I2C lines on PORTB
-   INTCON2bits.RBPU = 0;
 }
 
 int main(void)
@@ -65,13 +75,16 @@ int main(void)
 	unsigned char r, g, b;
 	
 	// Configure I/O ports
+	configure_osc();
 	configure_ports();
+	configure_ssp2_i2c();
 	
 	// Configure SSP2 for I2C communication
 	configure_ssp2_i2c();
 	
 	// Initialize PWM for RGB LED control
 	lights_init();
+	button_init();
 	
 	// Initialize accelerometer
 	acc_status = accelerometer_init();
