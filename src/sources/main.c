@@ -24,9 +24,8 @@ void configure_osc(void)
 
 void configure_ports(void)
 {
-	// PORTA: RA0 as output for error indicator LED
 	TRISA  = 0x00;
-	TRISB  = 0x01;
+	TRISB  = 0x07;
 	TRISC  = 0x00;  
     ANSELA = 0x00;
 	ANSELB = 0x00;
@@ -138,6 +137,8 @@ int main(void)
 			lights_off();
 			PORTA = 0x01;
 		}
+
+		button_code();
 		
 		// Small delay to prevent I2C bus saturation
 		// Adjust based on your desired sampling rate
