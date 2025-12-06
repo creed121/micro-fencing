@@ -5,9 +5,9 @@
  * @date 2025-11
  */
 
-// #include "../includes/button.h"
+#include "../includes/button.h"
 
-#include "./button.h"
+// #include "./button.h"
 
 #define _XTAL_FREQ 16000000UL   // CPU Frequency in Hz
 
@@ -18,7 +18,7 @@
 unsigned char pr_arr[32] = {
     e5, b4, c5, d5, c5, b4, a4, a4,
     c5, e5, d5, c5, b4, b4, c5, d5,
-    e5, c5, a4, a4, null, d5, f5, a5,
+    e5, c5, a4, a4, rest, d5, f5, a5,
     g5, f5, e5, c5, e5, d5, c5, b4
 };
 
@@ -45,7 +45,7 @@ void delay_units(uint16_t units)
 }
 // ---------------------------------------------------------------------
 
-void init_pwm_ccp5(void)
+void button_init(void)
 {
     // Configure CCP5 as PWM (CCP5CON<3:0> = 1100 = 0x0C)
     CCP5CON = 0x0C;

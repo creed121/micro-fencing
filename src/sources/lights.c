@@ -5,19 +5,13 @@
  * @date 2025-11
  */
 
-// #include "../includes/lights.h"
+#include "../includes/lights.h"
 
-#include "./lights.h"
+// #include "./lights.h"
 
 static unsigned char current_r = 0;
 static unsigned char current_g = 0;
 static unsigned char current_b = 0;
-
-static unsigned char fade_target_r = 0;
-static unsigned char fade_target_g = 0;
-static unsigned char fade_target_b = 0;
-static unsigned char fade_steps_remaining = 0;
-static unsigned char fade_total_steps = 0;
 
 /**
  * @brief Initialize PWM modules for RGB LED control.
@@ -45,12 +39,6 @@ void lights_init(void)
 	// PR2 = 249
 	PR2 = 249;
 	
-	// Configure PORTC, PORTB as digital outputs
-	TRISC = 0xFB;  // RC2 (CCP1) as output
-	TRISB = 0xD7;  // RB3 (CCP2) and RB5 (CCP3) as outputs
-    ANSELC = 0x00;
-    ANSELB = 0x00;
-	
 	// Configure CCP1 (Red) on RC2
 	// CCP1CON: mode = PWM (1100), DCxB = 00
 	CCP1CON = 0x0C;  // PWM mode
@@ -65,9 +53,6 @@ void lights_init(void)
 	// CCP3CON: mode = PWM (1100), DCxB = 00
 	CCP3CON = 0x0C;  // PWM mode
 	CCPR3L = 0;      // Initialize duty cycle to 0
-	
-	// Initialize fade state
-	fade_steps_remaining = 0;
 }
 
 /**
@@ -80,44 +65,11 @@ void lights_set_color(unsigned char r, unsigned char g, unsigned char b)
 	current_g = g;
 	current_b = b;
 	
-	// Reset fade state
-	fade_steps_remaining = 0;
-	
 	// Set PWM duty cycles (CCPR1L, CCPR2L, CCPR3L hold upper 8 bits)
 	// For 8-bit resolution, LSBs are 0
 	CCPR1L = r;  // Red
 	CCPR2L = g;  // Green
 	CCPR3L = b;  // Blue
-}
-
-/**
- * @brief Set only the red LED brightness.
- */
-void lights_set_red(unsigned char brightness)
-{
-	current_r = brightness;
-	fade_steps_remaining = 0;
-	CCPR1L = brightness;
-}
-
-/**
- * @brief Set only the green LED brightness.
- */
-void lights_set_green(unsigned char brightness)
-{
-	current_g = brightness;
-	fade_steps_remaining = 0;
-	CCPR2L = brightness;
-}
-
-/**
- * @brief Set only the blue LED brightness.
- */
-void lights_set_blue(unsigned char brightness)
-{
-	current_b = brightness;
-	fade_steps_remaining = 0;
-	CCPR3L = brightness;
 }
 
 /**
@@ -128,7 +80,6 @@ void lights_off(void)
 	current_r = 0;
 	current_g = 0;
 	current_b = 0;
-	fade_steps_remaining = 0;
 	
 	CCPR1L = 0;
 	CCPR2L = 0;

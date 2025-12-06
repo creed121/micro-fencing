@@ -9,9 +9,7 @@
 
 // #include "./accelerometer.h"
 
-static unsigned char accelerometer_initialized = 0;
-
-static unsigned int isqrt(unsigned long n);
+unsigned char accelerometer_initialized = 0;
 
 /**
  * @brief Initialize the MPU-6050 accelerometer/gyroscope.
@@ -19,7 +17,6 @@ static unsigned int isqrt(unsigned long n);
 acc_error_t accelerometer_init()
 {
 	unsigned char device_id;
-	unsigned char config_data[2];
 	
 	// Read WHO_AM_I register to verify device communication
 	device_id = i2c_single_read(MPU6050_WHO_AM_I);
@@ -32,13 +29,12 @@ acc_error_t accelerometer_init()
 	
 	// Wake up the MPU-6050 (it may be in sleep mode)
 	// PWR_MGMT_1 = 0x00 (internal clock, no sleep)
-	i2c_single_write(MPU6050_PWR_MGMT_1, 0x00);
+	i2c_single_write(MPU6050_PWR_MGMT_1, 0x09);
 	
 	// Configure gyroscope sensitivity to ±250°/s (GYRO_CONFIG = 0x00)
 	i2c_single_write(MPU6050_GYRO_CONFIG, 0x00);
 	
-	// Configure accelerometer sensitivity to ±2g (ACCEL_CONFIG = 0x00)
-	i2c_single_write(MPU6050_ACCEL_CONFIG, 0x00);
+	i2c_single_write(MPU6050_REG_CONFIG, 0x03);
 	
 	accelerometer_initialized = 1;
 	return ACC_SUCCESS;
@@ -51,7 +47,6 @@ acc_error_t accelerometer_init()
 acc_error_t accelerometer_read_gyro(gyro_data_t* gyro)
 {
 	unsigned char buffer[6];
-	uint16_t temp;
 	
 	if (!accelerometer_initialized)
 	{
@@ -70,9 +65,6 @@ acc_error_t accelerometer_read_gyro(gyro_data_t* gyro)
 	gyro->gx = (int16_t)(((uint16_t)buffer[0] << 8) | buffer[1]);
     gyro->gy = (int16_t)(((uint16_t)buffer[2] << 8) | buffer[3]);
     gyro->gz = (int16_t)(((uint16_t)buffer[4] << 8) | buffer[5]);
-
-	// O-scope data
-	gyro->gx = (int16_t) 0b1111110110000001;
 	
 	return ACC_SUCCESS;
 }
@@ -91,9 +83,9 @@ acc_error_t accelerometer_calculate_magnitude_with_check(gyro_data_t* gyro,
 	
 	// Use unsigned long to prevent overflow during multiplication
 	unsigned long sum = 0;
-	long gx_long = (long)gyro->gx;
-	long gy_long = (long)gyro->gy;
-	long gz_long = (long)gyro->gz;
+	long gx_long = (long)gyro->gx / GYRO_SENSITIVITY;
+	long gy_long = (long)gyro->gy / GYRO_SENSITIVITY;
+	long gz_long = (long)gyro->gz / GYRO_SENSITIVITY;
     	
 	sum = (gx_long * gx_long) + (gy_long * gy_long) + (gz_long * gz_long);
 	
@@ -106,7 +98,7 @@ acc_error_t accelerometer_calculate_magnitude_with_check(gyro_data_t* gyro,
 /**
  * @brief Simple integer square root using Newton's method.
  */
-static unsigned int isqrt(unsigned long n)
+unsigned int isqrt(unsigned long n)
 {
 	if (n == 0)
 	{
@@ -232,7 +224,7 @@ acc_error_t accelerometer_speed_to_color(unsigned int speed,
 	{
 		// Slow to medium: Yellow (transitioning from Red to Green)
 		*r = 255;
-		*g = 255;
+		*g = 50;
 		*b = 0;
 	}
 	else if (speed <= 600)

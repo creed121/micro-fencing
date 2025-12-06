@@ -44,30 +44,6 @@ void lights_init(void);
 void lights_set_color(unsigned char r, unsigned char g, unsigned char b);
 
 /**
- * @brief Set only the red LED brightness.
- * 
- * @param brightness Red PWM duty cycle (0-255)
- * @return void
- */
-void lights_set_red(unsigned char brightness);
-
-/**
- * @brief Set only the green LED brightness.
- * 
- * @param brightness Green PWM duty cycle (0-255)
- * @return void
- */
-void lights_set_green(unsigned char brightness);
-
-/**
- * @brief Set only the blue LED brightness.
- * 
- * @param brightness Blue PWM duty cycle (0-255)
- * @return void
- */
-void lights_set_blue(unsigned char brightness);
-
-/**
  * @brief Turn off all RGB LEDs.
  * 
  * Sets all PWM duty cycles to 0.

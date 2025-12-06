@@ -5,15 +5,15 @@
  * @date 2025-11
  */
 
-//#include "../includes/main.h"
+#include "../includes/main.h"
 
-#include "main.h"
+// #include "main.h"
 
 // Add JavaDoc
 void configure_osc(void)
 {
 	// Use internal oscillator
-	OSCCON = 0x76;
+	OSCCON = 0x7A;
 }
 
 /**
@@ -24,9 +24,9 @@ void configure_osc(void)
 
 void configure_ports(void)
 {
-	TRISA  = 0x00;
-	TRISB  = 0x07;
-	TRISC  = 0x00;  
+	TRISA  = 0xFC; // 0-1 are outputs (debug)
+	TRISB  = 0xD7; // 3 and 5 are outputs
+	TRISC  = 0xFB; // 2 is output
     ANSELA = 0x00;
 	ANSELB = 0x00;
 	ANSELC = 0x00;
@@ -83,7 +83,7 @@ int main(void)
 	
 	// Initialize PWM for RGB LED control
 	lights_init();
-	button_init();
+	// button_init();
 	
 	// Initialize accelerometer
 	acc_status = accelerometer_init();
@@ -138,7 +138,7 @@ int main(void)
 			PORTA = 0x01;
 		}
 
-		button_code();
+		// button_code();
 		
 		// Small delay to prevent I2C bus saturation
 		// Adjust based on your desired sampling rate

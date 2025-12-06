@@ -14,11 +14,13 @@
 #include "./i2c.h"
 
 #define MPU6050_PWR_MGMT_1      0x6B  // Power management register
+#define MPU6050_REG_CONFIG      0x1A  // Register config for low pass filter
 #define MPU6050_GYRO_CONFIG     0x1B  // Gyroscope configuration register
-#define MPU6050_ACCEL_CONFIG    0x1C  // Accelerometer configuration register
 #define MPU6050_ACCEL_XOUT_H    0x3B  // Accelerometer X-axis high byte
 #define MPU6050_GYRO_XOUT_H     0x43  // Gyroscope X-axis high byte
 #define MPU6050_WHO_AM_I        0x75  // Device ID register
+
+#define GYR0_SENSITIVITY 131
 
 typedef enum
 {
@@ -127,5 +129,8 @@ acc_error_t accelerometer_speed_to_color(unsigned int speed,
  * @return void
  */
 void accelerometer_reset_moving_avg(moving_avg_t* avg);
+
+// Add JavaDoc
+unsigned int isqrt(unsigned long n);
 
 #endif  // ACCELEROMETER_H

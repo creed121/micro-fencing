@@ -14,13 +14,11 @@
  * Configuration Macros
  * ------------------------------------------------------------------ */
 
-/** Tempo unit in milliseconds (compile-time constant).  
- *  Modify in project settings as needed.
- */
+// Tempo unit in milliseconds.
 #define UNIT_MS 75
 
-/** Note value definitions (PR2 register values for PWM frequency) */
-#define null 0x00
+// Note value definitions (PR2 register values for PWM frequency)
+#define rest 0x00
 #define b3  0xFC
 #define c4  0xEE
 #define d4  0xD4
