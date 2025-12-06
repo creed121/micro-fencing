@@ -1,7 +1,7 @@
 # Micro-Fencing
 
-## [./src/sources|Implementations]
+## [Implementations](./src/sources)
 - `.c` files
 
-## [./src/includes|Specifications]
+## [Specifications](./src/includes)
 - `.h` files
