@@ -24,9 +24,9 @@ void configure_osc(void)
 
 void configure_ports(void)
 {
-	TRISA  = 0xFC; // 0-1 are outputs (debug)
-	TRISB  = 0xD7; // 3 and 5 are outputs
-	TRISC  = 0xFB; // 2 is output
+	TRISA  = 0xEE; // 4 is output (Speaker); 0 is output (Debug)
+	TRISB  = 0xD7; // 3 and 5 are outputs (LED); 1 is input (Button)
+	TRISC  = 0xFB; // 2 is output (LED)
     ANSELA = 0x00;
 	ANSELB = 0x00;
 	ANSELC = 0x00;
@@ -78,12 +78,9 @@ int main(void)
 	configure_ports();
 	configure_ssp2_i2c();
 	
-	// Configure SSP2 for I2C communication
-	configure_ssp2_i2c();
-	
 	// Initialize PWM for RGB LED control
 	lights_init();
-	// button_init();
+	button_init();
 	
 	// Initialize accelerometer
 	acc_status = accelerometer_init();
@@ -138,7 +135,7 @@ int main(void)
 			PORTA = 0x01;
 		}
 
-		// button_code();
+		button_code();
 		
 		// Small delay to prevent I2C bus saturation
 		// Adjust based on your desired sampling rate

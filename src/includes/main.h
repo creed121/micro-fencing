@@ -14,15 +14,21 @@
 #include "./i2c.h"
 
 // Oscillator: HS oscillator at medium power (16 MHz)
-#pragma config FOSC = INTIO67
+#pragma config     FOSC = INTIO67
+#pragma config   PLLCFG = OFF
+#pragma config PRICLKEN = ON
+#pragma config    FCMEN = OFF
 
 // Power-up Timer: Enabled for stable startup
 #pragma config PWRTEN = ON
+#pragma config  BOREN = SBORDIS
 
 // Port Configuration: PORTB as digital (disables analog), CCP routing
 #pragma config PBADEN = OFF         // PORTB pins digital
 #pragma config CCP2MX = PORTB3      // Use RB3 for CCP2 (Green PWM)
 #pragma config CCP3MX = PORTB5      // Use RB5 for CCP3 (Blue PWM)
+#pragma config    LVP = OFF
+#pragma config  DEBUG = OFF
 
 // Reset and Debug: MCLR enabled for programming, extended instructions OFF
 #pragma config MCLRE = EXTMCLR  // MCLR pin enabled
@@ -30,7 +36,7 @@
 
 // Optional but recommended: Stack protection, Watchdog OFF
 #pragma config STVREN = ON      // Stack overflow reset
-#pragma config WDTEN = OFF      // Watchdog timer disabled
+#pragma config  WDTEN = OFF      // Watchdog timer disabled
 
 // Add JavaDoc
 void configure_osc(void);
