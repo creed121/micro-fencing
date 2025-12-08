@@ -18,7 +18,6 @@
 #define UNIT_MS 75
 
 // Note value definitions (PR2 register values for PWM frequency)
-#define rest 0x00
 #define b3  0xFC
 #define c4  0xEE
 #define d4  0xD4
@@ -40,7 +39,7 @@
  * External Melody Data
  * ------------------------------------------------------------------ */
 
-#define MELODY_LENGTH 32
+#define MELODY_LENGTH 7
 
 /* ---------------------------------------------------------------------
  * Public API
